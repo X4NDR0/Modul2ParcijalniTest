@@ -1,0 +1,54 @@
+﻿@using Modul2ParcijalniTest.SqlFacade;
+@model Modul2ParcijalniTest.SqlFacade.Racun;
+@{
+    Layout = null;
+}
+
+<html>
+
+    <head>
+        <style type="text/css">
+            .searchContainer{
+                display:inline-block;
+            }
+        </style>
+    </head>
+
+
+    <body>
+
+        
+    @using(Html.BeginForm("EditBill","Bill",FormMethod.Post))
+    {
+
+             <h3>Izmeni racun:@Model.BrojRacuna</h3>
+
+             <p class="searchContainer">Nosilac racuna:</p> 
+             @Html.TextBoxFor(x => x.NosilacRacuna)
+
+             <br />
+
+             <p class="searchContainer">Broj racuna:</p>
+             @Html.TextBoxFor(x => x.BrojRacuna)
+
+             <br />
+
+             <p class="searchContainer">Online:</p>
+             @Html.CheckBoxFor(x => x.OnlineBanking)
+
+             <br />
+
+             <p class="searchContainer">Aktivan:</p>
+             @Html.CheckBoxFor(x => x.AktivanRacun)
+
+             <br />
+
+             <button type="submit">Izmeni racun</button>
+             
+    }
+
+
+    </body>
+
+
+</html>

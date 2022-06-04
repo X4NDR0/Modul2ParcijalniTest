@@ -1,0 +1,82 @@
+﻿@model Modul2ParcijalniTest.ViewModels.BillViewModel;
+@{
+    Layout = null;
+}
+
+<html>
+
+    <head>
+        <style type="text/css">
+            .searchContainer{
+                display:inline-block;
+            }
+
+        </style>
+    </head>
+
+
+    <body>
+        <h1>Rad sa racunom: @Model.Racun.BrojRacuna</h1>
+        </br>
+        <p>Vlasnik racuna:@Model.Racun.NosilacRacuna</p>
+        <p>Spisah svih transakcija:</p>
+
+        <table border="1">
+
+            <tr>
+                <th>Transant</th>
+                <th>Iznos uplate</th>
+                <th>Datum prometa</th>
+                <th>Svrha uplate</th>
+                <th>Hitno</th>
+            </tr>
+
+        </table>
+
+        <p>Ukupno stanje:</p>
+
+        <hr />
+
+        <h2>Izvrsi novu transakciju:</h2>
+
+        @using(Html.BeginForm("OpenBill","Bill",FormMethod.Post))
+        {
+        
+        <p class="searchContainer">Transant:</p>
+        @Html.TextBoxFor(x => x.Uplatnica.Uplatilac)
+
+        <br />
+
+        <p class="searchContainer">Iznos uplate:</p>
+        @Html.TextBoxFor(x => x.Uplatnica.IznosUplate)
+
+        <br />
+
+        <p class="searchContainer">Datum prometa:</p>
+        @Html.TextBoxFor(x => x.Uplatnica.DatumPrometa)
+
+        <br />
+
+        <p class="searchContainer">Svrha uplate:</p>
+        @Html.TextBoxFor(x => x.Uplatnica.SvrhaUplate)
+
+        <br />
+
+        <p class="searchContainer">Hitno:</p>
+        @Html.CheckBoxFor(x => x.Uplatnica.Hitno)
+        
+        @Html.HiddenFor(x => x.Racun,Model.Racun)
+        @Html.EditorFor(x => x.Racun,Model.Racun)
+        <br />
+
+        <button type="submit">Izvrsi transakciju</button>
+
+        }
+
+        <hr />
+
+        @Html.ActionLink("Povrat na glavnu stranu","Index","Bill")
+
+    </body>
+
+</html>
