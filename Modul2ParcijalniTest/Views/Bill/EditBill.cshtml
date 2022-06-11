@@ -1,54 +1,58 @@
 ﻿@using Modul2ParcijalniTest.SqlFacade;
-@model Modul2ParcijalniTest.SqlFacade.Racun;
+@model Modul2ParcijalniTest.SqlFacade.Bill;
 @{
     Layout = null;
 }
 
 <html>
 
-    <head>
-        <style type="text/css">
-            .searchContainer{
-                display:inline-block;
-            }
-        </style>
-    </head>
+<head>
+    <style type="text/css">
+        .searchContainer {
+            display: inline-block;
+        }
+    </style>
+</head>
 
 
-    <body>
+<body>
 
-        
-    @using(Html.BeginForm("EditBill","Bill",FormMethod.Post))
+
+    @using (Html.BeginForm("EditBill", "Bill", FormMethod.Post))
     {
 
-             <h3>Izmeni racun:@Model.BrojRacuna</h3>
+        <h3>Izmeni racun:@Model.AccountNumber</h3>
 
-             <p class="searchContainer">Nosilac racuna:</p> 
-             @Html.TextBoxFor(x => x.NosilacRacuna)
+        <p class="searchContainer">Nosilac racuna:</p>
+        @Html.TextBoxFor(x => x.AccountHolder)
+        @Html.ValidationMessageFor(x => x.AccountHolder)
 
-             <br />
+        <br />
 
-             <p class="searchContainer">Broj racuna:</p>
-             @Html.TextBoxFor(x => x.BrojRacuna)
+        <p class="searchContainer">Broj racuna:</p>
+        @Html.TextBoxFor(x => x.AccountNumber)
+        @Html.ValidationMessageFor(x => x.AccountNumber)
 
-             <br />
+        <br />
 
-             <p class="searchContainer">Online:</p>
-             @Html.CheckBoxFor(x => x.OnlineBanking)
+        <p class="searchContainer">Online:</p>
+        @Html.CheckBoxFor(x => x.OnlineBanking)
+        @Html.ValidationMessageFor(x => x.OnlineBanking)
 
-             <br />
+        <br />
 
-             <p class="searchContainer">Aktivan:</p>
-             @Html.CheckBoxFor(x => x.AktivanRacun)
+        <p class="searchContainer">Aktivan:</p>
+        @Html.CheckBoxFor(x => x.ActiveAccount)
+        @Html.ValidationMessageFor(x => x.ActiveAccount)
 
-             <br />
+        <br />
 
-             <button type="submit">Izmeni racun</button>
-             
+        <button type="submit">Izmeni racun</button>
+
     }
 
 
-    </body>
+</body>
 
 
 </html>

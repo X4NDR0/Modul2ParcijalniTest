@@ -1,0 +1,62 @@
+﻿@model Modul2ParcijalniTest.SqlFacade.Invoice;
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <title>Izmena uplatnice</title>
+    <style type="text/css">
+        .searchContainer {
+            display: inline-block;
+        }
+
+    </style>
+</head>
+
+<body>
+    @using (Html.BeginForm("EditInvoice", "Invoice", FormMethod.Post))
+    {
+        <p class="searchContainer">Transant:</p>
+        @Html.TextBoxFor(x => x.Payer)
+        @Html.ValidationMessageFor(x => x.Payer)
+        ;
+
+        <br />
+
+        <p class="searchContainer">Iznos uplate:</p>
+        @Html.TextBoxFor(x => x.PaymentAmount)
+        @Html.ValidationMessageFor(x => x.PaymentAmount)
+        ;
+
+        <br />
+
+        <p class="searchContainer">Datum prometa:</p>
+        @Html.TextBoxFor(x => x.Date,Model.Date.ToString("MM/dd/yyyy"))
+        @Html.ValidationMessageFor(x => x.Date)
+        ;
+
+        <br />
+
+        <p class="searchContainer">Svrha uplate:</p>
+        @Html.TextAreaFor(x => x.PaymentPurpose)
+        @Html.ValidationMessageFor(x => x.PaymentPurpose)
+        ;
+
+        <br />
+
+        <p class="searchContainer">Hitno:</p>
+        @Html.CheckBoxFor(x => x.Urgent)
+        @Html.ValidationMessageFor(x => x.Urgent)
+        ;
+
+        <br />
+
+        @Html.HiddenFor(x => x.Id,Model.Id)
+        @Html.HiddenFor(x => x.BillID,Model.BillID)
+
+        <button type="submit">Izmeni uplatnicu</button>
+    }
+</body>
+
+</html>

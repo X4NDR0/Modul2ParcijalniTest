@@ -1,0 +1,103 @@
+﻿@using Modul2ParcijalniTest.SqlFacade
+@model Modul2ParcijalniTest.ViewModels.SortBillsViewModel;
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <style type="text/css">
+        .searchContainer {
+            display: inline-block;
+        }
+
+    </style>
+    <title>Sortiranje uplatnica</title>
+</head>
+
+<body>
+    @using (Html.BeginForm("SortBills", "Bill", FormMethod.Post))
+    {
+        <p class="searchContainer">Nosilac racuna:</p>
+        @Html.TextBoxFor(x => x.Bill.AccountHolder)
+
+        <br />
+
+        <p class="searchContainer">Broj racuna:</p>
+        @Html.TextBoxFor(x => x.Bill.AccountNumber)
+
+        <p>
+            Iznos od:
+            @Html.TextBoxFor(x => x.PriceFrom)
+            do:
+            @Html.TextBoxFor(x => x.PriceTo)
+        </p>
+
+        <p class="searchContainer">Aktivan:</p>
+        @Html.CheckBoxFor(x => x.Bill.ActiveAccount)
+
+        <br />
+
+        <p class="searchContainer">Online banking:</p>
+        @Html.CheckBoxFor(x => x.Bill.OnlineBanking)
+
+        <br />
+
+        <button type="submit">Sortiraj</button>
+    }
+
+    <table border="1">
+        <tr>
+            <th>Nosilac racuna</th>
+            <th>Broj racuna</th>
+            <th>Ukupno</th>
+            <th>Aktivan racun</th>
+            <th>Online banking</th>
+        </tr>
+
+        @foreach (Bill bill in Model.BillList)
+        {
+            <tr>
+                <td>@bill.AccountHolder</td>
+                <td>@bill.AccountNumber</td>
+
+                @{
+                    Model.Price = 0;
+                }
+
+                @foreach (Invoice invoice in Model.InvoiceList)
+                {
+                    @if (invoice.BillID == bill.Id)
+                    {
+                        Model.Price += invoice.PaymentAmount;
+                    }
+                }
+                <td>@Model.Price</td>
+                @if (bill.ActiveAccount)
+                {
+                    <td>Da</td>
+                }
+                else
+                {
+                    <td>Ne</td>
+                }
+
+                @if (bill.OnlineBanking)
+                {
+                    <td>Da</td>
+                }
+                else
+                {
+                    <td>Ne</td>
+                }
+            </tr>
+
+        }
+    </table>
+
+    <hr />
+    @Html.ActionLink("Povratak na glavnu stranu","Index","Bill")
+
+</body>
+
+</html>

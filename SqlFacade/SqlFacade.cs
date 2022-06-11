@@ -1,4 +1,6 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace Modul2ParcijalniTest.SqlFacade
 {
@@ -6,28 +8,48 @@ namespace Modul2ParcijalniTest.SqlFacade
     {
         private string _connectionString = "Data Source=DESKTOP-QS7CCGF\\SQLEXPRESS;Initial Catalog=Modul2Test;Integrated Security=true";
 
-        public void AddBill(Racun racun)
+        public int AddBill(Bill bill)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
+                int id = 0;
                 connection.Open();
-                string command = "insert into dbo.Racun(Nosilac_racuna,Broj_racuna,Aktivan_racun,Online_banking) values(@nosilacRacuna,@brojRacuna,@aktivanRacun,@onlineBanking)";
+                string command = "insert into dbo.Racun(nosilacRacuna,brojRacuna,aktivanRacun,onlineBanking) values(@nosilacRacuna,@brojRacuna,@aktivanRacun,@onlineBanking) SELECT Scope_Identity()";
                 SqlCommand sqlCommand = new SqlCommand(command, connection);
-                sqlCommand.Parameters.AddWithValue("@nosilacRacuna", racun.NosilacRacuna);
-                sqlCommand.Parameters.AddWithValue("@brojRacuna", racun.BrojRacuna);
-                sqlCommand.Parameters.AddWithValue("@aktivanRacun", racun.AktivanRacun);
-                sqlCommand.Parameters.AddWithValue("@onlineBanking", racun.OnlineBanking);
+                sqlCommand.Parameters.AddWithValue("@nosilacRacuna", bill.AccountHolder);
+                sqlCommand.Parameters.AddWithValue("@brojRacuna", bill.AccountNumber);
+                sqlCommand.Parameters.AddWithValue("@aktivanRacun", bill.ActiveAccount);
+                sqlCommand.Parameters.AddWithValue("@onlineBanking", bill.OnlineBanking);
+                id = Convert.ToInt32(sqlCommand.ExecuteScalar());
+                return id;
+            }
+        }
+
+        public void EditInvoice(Invoice invoice)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string command = "update dbo.Uplatnica set idRacuna=@idRacuna,iznosUplate=@iznosUplate,datumPrometa=@datumPrometa,svrhaUplate=@svrhaUplate,uplatilac=@uplatilac,hitno=@hitno where idUplatnice=@id";
+                SqlCommand sqlCommand = new SqlCommand(command, sqlConnection);
+                sqlCommand.Parameters.AddWithValue("@id", invoice.Id);
+                sqlCommand.Parameters.AddWithValue("@idRacuna", invoice.BillID);
+                sqlCommand.Parameters.AddWithValue("@iznosUplate", invoice.PaymentAmount);
+                sqlCommand.Parameters.AddWithValue("@datumPrometa", invoice.Date);
+                sqlCommand.Parameters.AddWithValue("@svrhaUplate", invoice.PaymentPurpose);
+                sqlCommand.Parameters.AddWithValue("@uplatilac", invoice.Payer);
+                sqlCommand.Parameters.AddWithValue("@hitno", invoice.Urgent);
                 sqlCommand.ExecuteNonQuery();
             }
         }
 
-        public List<Racun> GetAllBills()
+        public List<Bill> GetAllBills()
         {
             using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
             {
                 bool isBillActive = false;
                 bool isOnlineBanking = false;
-                List<Racun> billList = new List<Racun>();
+                List<Bill> billList = new List<Bill>();
                 sqlConnection.Open();
                 string command = "select * from dbo.Racun";
                 SqlCommand cmd = new SqlCommand(command, sqlConnection);
@@ -36,19 +58,18 @@ namespace Modul2ParcijalniTest.SqlFacade
                 {
                     while (reader.Read())
                     {
-                        int id = int.Parse(reader["id"].ToString());
-                        string nosilacRacuna = reader["Nosilac_racuna"].ToString();
-                        string brojRacuna = reader["Broj_racuna"].ToString();
-                        isBillActive = reader.GetBoolean(reader.GetOrdinal("Aktivan_racun"));
-                        isOnlineBanking = reader.GetBoolean(reader.GetOrdinal("Online_banking"));
+                        int id = int.Parse(reader["idRacuna"].ToString());
+                        string accountHolder = reader["nosilacRacuna"].ToString();
+                        string accountNumber = reader["brojRacuna"].ToString();
+                        isBillActive = reader.GetBoolean(reader.GetOrdinal("aktivanRacun"));
+                        isOnlineBanking = reader.GetBoolean(reader.GetOrdinal("onlineBanking"));
 
-                        Racun racun = new Racun { Id = id, NosilacRacuna = nosilacRacuna, BrojRacuna = brojRacuna, AktivanRacun = isBillActive, OnlineBanking = isOnlineBanking };
-                        billList.Add(racun);
+                        Bill bill = new Bill { Id = id, AccountHolder = accountHolder, AccountNumber = accountNumber, ActiveAccount = isBillActive, OnlineBanking = isOnlineBanking };
+                        billList.Add(bill);
                     }
                 }
                 return billList;
             }
-
         }
 
         public void RemoveBill(int id)
@@ -56,45 +77,86 @@ namespace Modul2ParcijalniTest.SqlFacade
             using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-                string command = "delete from dbo.Racun where id=@id";
+                string command = "delete from dbo.Racun where idRacuna=@id";
                 SqlCommand sqlCommand = new SqlCommand(command, sqlConnection);
                 sqlCommand.Parameters.AddWithValue("@id", id);
                 sqlCommand.ExecuteNonQuery();
             }
         }
 
-        public void EditBill(Racun racun)
+        public void EditBill(Bill bill)
         {
             using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-                string command = "update dbo.Racun set Nosilac_racuna=@nosilacRacuna,Broj_racuna=@brojRacuna,Aktivan_racun=@aktivanRacun,Online_banking=@onlineBanking where id=@id";
+                string command = "update dbo.Racun set nosilacRacuna=@nosilacRacuna,brojRacuna=@brojRacuna,aktivanRacun=@aktivanRacun,onlineBanking=@onlineBanking where idRacuna=@id";
                 SqlCommand sqlCommand = new SqlCommand(command, sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@id", racun.Id);
-                sqlCommand.Parameters.AddWithValue("@nosilacRacuna", racun.NosilacRacuna);
-                sqlCommand.Parameters.AddWithValue("@brojRacuna", racun.BrojRacuna);
-                sqlCommand.Parameters.AddWithValue("@aktivanRacun", racun.AktivanRacun);
-                sqlCommand.Parameters.AddWithValue("@onlineBanking", racun.OnlineBanking);
+                sqlCommand.Parameters.AddWithValue("@id", bill.Id);
+                sqlCommand.Parameters.AddWithValue("@nosilacRacuna", bill.AccountHolder);
+                sqlCommand.Parameters.AddWithValue("@brojRacuna", bill.AccountNumber);
+                sqlCommand.Parameters.AddWithValue("@aktivanRacun", bill.ActiveAccount);
+                sqlCommand.Parameters.AddWithValue("@onlineBanking", bill.OnlineBanking);
                 sqlCommand.ExecuteNonQuery();
             }
         }
 
-        public void DodajUplatnicu(Uplatnica uplatnica)
+        public int AddInvoice(Invoice invoice)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
+                int id = 0;
                 connection.Open();
-                string command = "insert into dbo.Uplatnica(id,id_racuna,Iznos_uplate,Datum_prometa,Svrha_uplate,Uplatilac,Hitno) values(@id,@idRacuna,@iznosUplate,@datumPrometa,@svrhaUplate,@uplatilac,@hitno)";
+                string command = "insert into dbo.Uplatnica(idRacuna,iznosUplate,datumPrometa,svrhaUplate,uplatilac,hitno) values(@idRacuna,@iznosUplate,@datumPrometa,@svrhaUplate,@uplatilac,@hitno) SELECT Scope_Identity()";
                 SqlCommand sqlCommand = new SqlCommand(command, connection);
-                sqlCommand.Parameters.AddWithValue("@idRacuna", uplatnica.IdRacuna);
-                sqlCommand.Parameters.AddWithValue("@iznosUplate", uplatnica.IznosUplate);
-                sqlCommand.Parameters.AddWithValue("@datumPrometa", uplatnica.DatumPrometa);
-                sqlCommand.Parameters.AddWithValue("@svrhaUplate", uplatnica.SvrhaUplate);
-                sqlCommand.Parameters.AddWithValue("@uplatilac", uplatnica.Uplatilac);
-                sqlCommand.Parameters.AddWithValue("@hitno", uplatnica.Hitno);
+                sqlCommand.Parameters.AddWithValue("@idRacuna", invoice.BillID);
+                sqlCommand.Parameters.AddWithValue("@iznosUplate", invoice.PaymentAmount);
+                sqlCommand.Parameters.AddWithValue("@datumPrometa", invoice.Date);
+                sqlCommand.Parameters.AddWithValue("@svrhaUplate", invoice.PaymentPurpose);
+                sqlCommand.Parameters.AddWithValue("@uplatilac", invoice.Payer);
+                sqlCommand.Parameters.AddWithValue("@hitno", invoice.Urgent);
+                id = Convert.ToInt32(sqlCommand.ExecuteScalar());
+                return id;
+            }
+        }
+
+        public void RemoveInvoice(int id)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string command = "delete from dbo.Uplatnica where idUplatnice=@id";
+                SqlCommand sqlCommand = new SqlCommand(command, sqlConnection);
+                sqlCommand.Parameters.AddWithValue("@id", id);
                 sqlCommand.ExecuteNonQuery();
             }
         }
 
+        public List<Invoice> GetAllInvoices()
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+            {
+                List<Invoice> invoiceList = new List<Invoice>();
+                sqlConnection.Open();
+                string command = "select * from dbo.Uplatnica";
+                SqlCommand sqlCommand = new SqlCommand(command, sqlConnection);
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int invoiceId = int.Parse(reader["idUplatnice"].ToString());
+                        int billId = int.Parse(reader["idRacuna"].ToString());
+                        decimal paymentAmount = decimal.Parse(reader["iznosUplate"].ToString());
+                        DateTime dateTime = DateTime.Parse(reader["datumPrometa"].ToString());
+                        string paymentPurpose = reader["svrhaUplate"].ToString();
+                        string payer = reader["uplatilac"].ToString();
+                        bool urgent = reader.GetBoolean(reader.GetOrdinal("hitno"));
+
+                        Invoice uplatnica = new Invoice { Id = invoiceId, BillID = billId, PaymentAmount = paymentAmount, Date = dateTime, PaymentPurpose = paymentPurpose, Payer = payer, Urgent = urgent };
+                        invoiceList.Add(uplatnica);
+                    }
+                }
+                return invoiceList;
+            }
+        }
     }
 }

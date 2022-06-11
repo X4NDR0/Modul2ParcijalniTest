@@ -1,10 +1,15 @@
-﻿namespace Modul2ParcijalniTest.SqlFacade;
+﻿using System.Collections.Generic;
+
+namespace Modul2ParcijalniTest.SqlFacade;
 
 public interface ISqlFacade
 {
-    public void AddBill(Racun racun);
-    public List<Racun> GetAllBills();
+    public int AddBill(Bill racun);
+    public List<Bill> GetAllBills();
     public void RemoveBill(int id);
-    public void EditBill(Racun racun);
-    public void DodajUplatnicu(Uplatnica uplatnica);
+    public void EditBill(Bill racun);
+    public int AddInvoice(Invoice uplatnica);
+    public List<Invoice> GetAllInvoices();
+    public void RemoveInvoice(int id);
+    public void EditInvoice(Invoice uplatnica);
 }

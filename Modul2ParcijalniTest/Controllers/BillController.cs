@@ -1,66 +1,91 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Modul2ParcijalniTest.Interfaces;
 using Modul2ParcijalniTest.SqlFacade;
 using Modul2ParcijalniTest.ViewModels;
+using System.Collections.Generic;
 
 namespace Modul2ParcijalniTest.Controllers
 {
     public class BillController : Controller
     {
-        private ISqlFacade _sqlFacade;
-        public BillController(ISqlFacade sqlFacade)
+        private IBillService _IBillService;
+        public BillController(IBillService IBillService)
         {
-            _sqlFacade = sqlFacade;
+            _IBillService = IBillService;
         }
 
         public IActionResult Index()
         {
-            List<Racun> billList = _sqlFacade.GetAllBills();
-            IndexViewModel model = new IndexViewModel { AllBills = billList, Bill = null};
+            IndexViewModel model = _IBillService.Index();
+            return View(model);
+        }
+
+        public IActionResult SortBills()
+        {
+            SortBillsViewModel model = new SortBillsViewModel { BillList = new List<Bill>() };
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Index(IndexViewModel racun)
+        public IActionResult SortBills(SortBillsViewModel model)
         {
-            _sqlFacade.AddBill(racun.Bill);
+            model = _IBillService.SortBills(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Index(Bill bill)
+        {
+            IndexViewModel model = _IBillService.Index();
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            bill = _IBillService.EditDefaultBillValues(bill);
+            _IBillService.AddBill(bill);
             return RedirectToAction("Index", "Bill");
         }
 
         public IActionResult EditBill(int id)
         {
-            List<Racun> billList = _sqlFacade.GetAllBills();
-            Racun racun = billList.FirstOrDefault(x => x.Id == id);
-            return View(racun);
+            Bill bill = _IBillService.EditBill(id);
+            return View(bill);
         }
 
         [HttpPost]
-        public IActionResult EditBill(Racun racun)
+        public IActionResult EditBill(Bill bill)
         {
-            _sqlFacade.EditBill(racun);
+            IndexViewModel model = _IBillService.Index();
+            if (!ModelState.IsValid)
+            {
+                return View(bill);
+            }
+            _IBillService.EditBillPost(bill);
             return RedirectToAction("Index", "Bill");
         }
 
         public IActionResult OpenBill(int id)
         {
-            List<Racun> billList = _sqlFacade.GetAllBills();
-            Racun racun = billList.FirstOrDefault(x => x.Id == id);
-            BillViewModel billViewModel = new BillViewModel { Racun = racun,Uplatnica = null};
-            return View(billViewModel);
+            BillViewModel model = _IBillService.OpenBill(id);
+            return View(model);
         }
 
-        [HttpPost]
-        public IActionResult OpenBill(BillViewModel billViewModel)
+        public IActionResult DeactivateAccount(int id)
         {
-            _sqlFacade.DodajUplatnicu(billViewModel.Uplatnica);
-            return View();
+            _IBillService.DeactivateAccount(id);
+            return RedirectToAction("Index", "Bill");
         }
 
+        public IActionResult ActivateAccount(int id)
+        {
+            _IBillService.ActivateAccount(id);
+            return RedirectToAction("Index", "Bill");
+        }
 
         public IActionResult RemoveBill(int id)
         {
-            _sqlFacade.RemoveBill(id);
-            return RedirectToAction("Index","Bill");
+            _IBillService.RemoveBill(id);
+            return RedirectToAction("Index", "Bill");
         }
-
     }
 }

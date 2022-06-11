@@ -1,82 +1,150 @@
-﻿@model Modul2ParcijalniTest.ViewModels.BillViewModel;
+﻿@using Modul2ParcijalniTest.SqlFacade;
+@using Modul2ParcijalniTest.ViewModels
+@model Modul2ParcijalniTest.ViewModels.BillViewModel;
 @{
     Layout = null;
 }
 
 <html>
 
-    <head>
-        <style type="text/css">
-            .searchContainer{
-                display:inline-block;
-            }
-
-        </style>
-    </head>
-
-
-    <body>
-        <h1>Rad sa racunom: @Model.Racun.BrojRacuna</h1>
-        </br>
-        <p>Vlasnik racuna:@Model.Racun.NosilacRacuna</p>
-        <p>Spisah svih transakcija:</p>
-
-        <table border="1">
-
-            <tr>
-                <th>Transant</th>
-                <th>Iznos uplate</th>
-                <th>Datum prometa</th>
-                <th>Svrha uplate</th>
-                <th>Hitno</th>
-            </tr>
-
-        </table>
-
-        <p>Ukupno stanje:</p>
-
-        <hr />
-
-        <h2>Izvrsi novu transakciju:</h2>
-
-        @using(Html.BeginForm("OpenBill","Bill",FormMethod.Post))
-        {
-        
-        <p class="searchContainer">Transant:</p>
-        @Html.TextBoxFor(x => x.Uplatnica.Uplatilac)
-
-        <br />
-
-        <p class="searchContainer">Iznos uplate:</p>
-        @Html.TextBoxFor(x => x.Uplatnica.IznosUplate)
-
-        <br />
-
-        <p class="searchContainer">Datum prometa:</p>
-        @Html.TextBoxFor(x => x.Uplatnica.DatumPrometa)
-
-        <br />
-
-        <p class="searchContainer">Svrha uplate:</p>
-        @Html.TextBoxFor(x => x.Uplatnica.SvrhaUplate)
-
-        <br />
-
-        <p class="searchContainer">Hitno:</p>
-        @Html.CheckBoxFor(x => x.Uplatnica.Hitno)
-        
-        @Html.HiddenFor(x => x.Racun,Model.Racun)
-        @Html.EditorFor(x => x.Racun,Model.Racun)
-        <br />
-
-        <button type="submit">Izvrsi transakciju</button>
-
+<head>
+    <style type="text/css">
+        .searchContainer {
+            display: inline-block;
         }
 
-        <hr />
+    </style>
+</head>
 
-        @Html.ActionLink("Povrat na glavnu stranu","Index","Bill")
 
-    </body>
+<body>
+    <h1>Rad sa racunom: @Model.Bill.AccountNumber</h1>
+    </br>
+    <p>Vlasnik racuna:@Model.Bill.AccountHolder</p>
+    <p>Spisah svih transakcija:</p>
+
+    <table border="1">
+
+        <tr>
+            <th>Transant</th>
+            <th>Iznos uplate</th>
+            <th>Datum prometa</th>
+            <th>Svrha uplate</th>
+            <th>Hitno</th>
+        </tr>
+
+        @foreach (Invoice uplatnica in Model.InvoiceList)
+        {
+            @if (uplatnica.BillID == Model.Bill.Id)
+            {
+                Model.Price += uplatnica.PaymentAmount;
+                <tr>
+                    <td>@uplatnica.Payer</td>
+                    <td>@uplatnica.PaymentAmount</td>
+                    <td>@uplatnica.Date.ToString("MM/dd/yyyy")</td>
+                    <td>@uplatnica.PaymentPurpose</td>
+                    @if (uplatnica.Urgent)
+                    {
+                        <td>Da</td>
+                    }
+                    else
+                    {
+                        <td>Ne</td>
+                    }
+
+                    <td>@Html.ActionLink("Izmeni","EditInvoice","Invoice",new{invoiceId = uplatnica.Id,billId = Model.Bill.Id})</td>
+                    <td>@Html.ActionLink("Obrisi","RemoveInvoice","Invoice",new{invoiceId = uplatnica.Id,billId = Model.Bill.Id})</td>
+
+                </tr>
+            }
+        }
+
+    </table>
+
+    <h3>Ukupno stanje : @Model.Price</h3>
+
+    @Html.ActionLink("Prikazi samo uplate","Payments","Invoice",new{billId = Model.Bill.Id})
+    <b>|</b>
+    @Html.ActionLink("Prikazi samo isplate","Payouts","Invoice",new {billId = Model.Bill.Id})
+    <hr />
+
+    <h2>Izvrsi novu transakciju:</h2>
+
+    @if (!Model.Bill.ActiveAccount)
+    {
+        <h4>Racun je deaktiviran!</h4>
+    }
+    else
+    {
+        @using (Html.BeginForm("AddInvoice", "Invoice", FormMethod.Post))
+        {
+
+            <p class="searchContainer">Transant:</p>
+            @Html.TextBoxFor(x => x.Invoice.Payer)
+            @Html.ValidationMessageFor(x => x.Invoice.Payer)
+            <br />
+
+            <p class="searchContainer">Iznos uplate:</p>
+            @Html.TextBoxFor(x => x.Invoice.PaymentAmount)
+            @Html.ValidationMessageFor(x => x.Invoice.PaymentAmount)
+            ;
+            <br />
+
+            <p class="searchContainer">Datum prometa:</p>
+            @Html.TextBoxFor(x => x.Invoice.Date)
+            @Html.ValidationMessageFor(x => x.Invoice.Date)
+            ;
+            <br />
+
+            <p class="searchContainer">Svrha uplate:</p>
+            @Html.TextAreaFor(x => x.Invoice.PaymentPurpose)
+            @Html.ValidationMessageFor(x => x.Invoice.PaymentPurpose)
+            ;
+            <br />
+
+            <p class="searchContainer">Hitno:</p>
+            @Html.CheckBoxFor(x => x.Invoice.Urgent)
+
+
+            @Html.HiddenFor(x => x.Bill.Id,Model.Bill.Id)
+            ;
+            @Html.HiddenFor(x => x.Bill.AccountHolder,Model.Bill.AccountHolder)
+            ;
+            @Html.HiddenFor(x => x.Bill.AccountNumber,Model.Bill.AccountNumber)
+            ;
+            @Html.HiddenFor(x => x.Bill.ActiveAccount,Model.Bill.ActiveAccount)
+            ;
+            @Html.HiddenFor(x => x.Bill.OnlineBanking,Model.Bill.OnlineBanking)
+            ;
+
+            @for (int i = 0; i < Model.InvoiceList.Count; i++)
+            {
+                @Html.HiddenFor(x => x.InvoiceList[i].Id)
+                ;
+                @Html.HiddenFor(x => x.InvoiceList[i].BillID)
+                ;
+                @Html.HiddenFor(x => x.InvoiceList[i].PaymentAmount)
+                ;
+                @Html.HiddenFor(x => x.InvoiceList[i].Date)
+                ;
+                @Html.HiddenFor(x => x.InvoiceList[i].PaymentPurpose)
+                ;
+                @Html.HiddenFor(x => x.InvoiceList[i].Payer)
+                ;
+                @Html.HiddenFor(x => x.InvoiceList[i].Urgent)
+                ;
+            }
+
+            <br />
+
+            <button type="submit">Izvrsi transakciju</button>
+
+        }
+    }
+    <hr />
+
+    @Html.ActionLink("Povrat na glavnu stranu","Index","Bill")
+
+</body>
 
 </html>

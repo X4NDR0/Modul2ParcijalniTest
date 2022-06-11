@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Modul2ParcijalniTest.ViewModels
 {
-    public class IndexViewModel
+    public class SortInvoicesViewModel
     {
-        public Bill Bill { get; set; }
-        public List<Bill> AllBills { get; set; }
+        public Invoice Invoice { get; set; }
         public List<Invoice> InvoiceList { get; set; }
-        public decimal Price { get; set; }
+        public decimal PriceFrom { get; set; }
+        public decimal PriceTo { get; set; }
     }
 }

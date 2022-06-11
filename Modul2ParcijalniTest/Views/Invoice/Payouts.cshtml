@@ -1,0 +1,60 @@
+﻿@model Modul2ParcijalniTest.ViewModels.BillViewModel
+@using Modul2ParcijalniTest.SqlFacade;
+@{
+    Layout = null;
+}
+
+<html>
+
+<head>
+    <title>Payments</title>
+</head>
+
+
+<body>
+    <table border="1">
+
+        <tr>
+            <th>ID</th>
+            <th>Iznos uplate</th>
+            <th>Datum prometa</th>
+            <th>Svrha uplate</th>
+            <th>Hitno</th>
+        </tr>
+
+        <tr>
+
+            @foreach (Invoice uplatnica in Model.InvoiceList)
+            {
+                @if (uplatnica.BillID == Model.Bill.Id && uplatnica.PaymentAmount < 0)
+                {
+                    <td>@uplatnica.Payer</td>
+                    <td>@uplatnica.PaymentAmount</td>
+                    <td>@uplatnica.Date.ToString("MM/dd/yyyy")</td>
+                    <td>@uplatnica.PaymentPurpose</td>
+                    @if (uplatnica.Urgent)
+                    {
+                        <td>Da</td>
+                    }
+                    else
+                    {
+                        <td>Ne</td>
+                    }
+                }
+
+            }
+
+        </tr>
+
+    </table>
+
+    <hr />
+
+    @Html.ActionLink("Povratak na rad sa racunom","OpenBill","Bill",new {id = Model.Bill.Id})
+
+
+</body>
+
+
+
+</html>

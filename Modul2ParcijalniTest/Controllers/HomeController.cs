@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Modul2ParcijalniTest.SqlFacade;
+using Microsoft.Extensions.Logging;
 using Modul2ParcijalniTest.Models;
 using System.Diagnostics;
 

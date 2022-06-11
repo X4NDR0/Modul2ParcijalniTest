@@ -6,40 +6,53 @@
 
 <html>
 
-    <head>
-        <style type="text/css">
-            .searchContainer{
-                display:inline-block;
-            }
+<head>
+    <style type="text/css">
+        .searchContainer {
+            display: inline-block;
+        }
 
-        </style>
-
-
-
-    </head>
+    </style>
 
 
-    <body>
+</head>
 
-        <table border="1" id="table">
+
+<body>
+
+    <table border="1" id="table">
 
         <tr>
             <th>ID</th>
             <th>Nosilac Racuna</th>
             <th>Broj Racuna</th>
+            <th>Ukupno</th>
             <th>Aktivan Racun</th>
             <th>Online-Banking</th>
         </tr>
 
-            @foreach(Racun racun in Model.AllBills)
-            {
-
-                <tr>
+        @foreach (Bill racun in Model.AllBills)
+        {
+            <tr class="row">
                 <td>@racun.Id</td>
-                <td>@racun.NosilacRacuna</td>
-                <td>@racun.BrojRacuna</td>
+                <td>@racun.AccountHolder</td>
+                <td>@racun.AccountNumber</td>
 
-                @if(racun.AktivanRacun)
+                @{
+                    Model.Price = 0;
+                }
+
+                @foreach (Invoice uplatnica in Model.InvoiceList)
+                {
+                    @if (uplatnica.BillID == racun.Id)
+                    {
+                        Model.Price += uplatnica.PaymentAmount;
+                    }
+                }
+
+                <td>@Model.Price</td>
+
+                @if (racun.ActiveAccount)
                 {
                     <td>Da</td>
                 }
@@ -48,56 +61,69 @@
                     <td>Ne</td>
                 }
 
-                @if(racun.OnlineBanking)
+                @if (racun.OnlineBanking)
                 {
                     <td>Da</td>
                 }
                 else
+
                 {
                     <td>Ne</td>
                 }
-                
+
 
                 <td>@Html.ActionLink("Otvori","OpenBill","Bill",new {id = racun.Id})</td>
                 <td>@Html.ActionLink("Izmeni","EditBill","Bill",new {id = racun.Id})</td>
                 <td>@Html.ActionLink("Obrisi","RemoveBill","Bill",new {id = racun.Id})</td>
-               
-                </tr>
-            }
+
+                @if (racun.ActiveAccount)
+                {
+                    <td style="background-color:green">@Html.ActionLink("Deaktiviraj","DeactivateAccount","Bill",new {id = racun.Id})</td>
+                }
+                else
+                {
+                    <td style="background-color:red">@Html.ActionLink("Aktiviraj","ActivateAccount","Bill",new {id = racun.Id})</td>
+                }
+
+
+            </tr>
+        }
 
     </table>
-        
-    @using(Html.BeginForm("Index","Bill",FormMethod.Post))
+
+    @using (Html.BeginForm("Index", "Bill", FormMethod.Post))
     {
 
-             <h3>Dodaj novi racun:</h3>
+        <h3>Dodaj novi racun:</h3>
 
-             <p class="searchContainer">Nosilac racuna:</p> 
-             @Html.TextBoxFor(x => x.Bill.NosilacRacuna)
+        <p class="searchContainer">Nosilac racuna:</p>
+        @Html.TextBoxFor(x => x.Bill.AccountHolder)
+        @Html.ValidationMessageFor(x => x.Bill.AccountHolder)
 
-             <br />
+        <br />
 
-             <p class="searchContainer">Broj racuna:</p>
-             @Html.TextBoxFor(x => x.Bill.BrojRacuna)
+        <p class="searchContainer">Broj racuna:</p>
+        @Html.TextBoxFor(x => x.Bill.AccountNumber)
+        @Html.ValidationMessageFor(x => x.Bill.AccountNumber)
 
-             <br />
+        <br />
 
-             <p class="searchContainer">Online:</p>
-             @Html.CheckBoxFor(x => x.Bill.OnlineBanking)
+        <p class="searchContainer">Online:</p>
+        @Html.CheckBoxFor(x => x.Bill.OnlineBanking)
 
-             <br />
+        <br />
 
-             <p class="searchContainer">Aktivan:</p>
-             @Html.CheckBoxFor(x => x.Bill.AktivanRacun)
+        <button type="submit">Dodaj racun</button>
 
-             <br />
-
-             <button type="submit">Dodaj racun</button>
-             
     }
 
+    <hr />
 
-    </body>
+    @Html.ActionLink("Sortiraj uplatnice","SortInvoices","Invoice")
+    <b>|</b>
+    @Html.ActionLink("Sortiraj racune","SortBills","Bill")
+
+</body>
 
 
 </html>
