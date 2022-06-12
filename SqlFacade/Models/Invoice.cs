@@ -8,7 +8,7 @@ namespace Modul2ParcijalniTest.SqlFacade
         public int Id { get; set; }
         public int BillID { get; set; }
         [Required(ErrorMessage = "Ovo polje je obavezno!")]
-        [RegularExpression(@"[0-9]+(\.[0-9][0-9]?)?", ErrorMessage = "Iznos uplate mora biti u nekim od sledecih formata(100 | 99.99)")]
+        [DataType(DataType.Currency)]
         public decimal PaymentAmount { get; set; }
         [Required(ErrorMessage = "Ovo polje je obavezno!")]
         public DateTime Date { get; set; }
