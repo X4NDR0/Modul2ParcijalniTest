@@ -33,7 +33,7 @@
             <th>Hitno</th>
         </tr>
 
-        @foreach (Invoice uplatnica in Model.InvoiceList)
+        @foreach (Invoice uplatnica in Model.Invoices)
         {
             @if (uplatnica.BillID == Model.Bill.Id)
             {
@@ -117,21 +117,21 @@
             @Html.HiddenFor(x => x.Bill.OnlineBanking,Model.Bill.OnlineBanking)
             ;
 
-            @for (int i = 0; i < Model.InvoiceList.Count; i++)
+            @for (int i = 0; i < Model.Invoices.Count; i++)
             {
-                @Html.HiddenFor(x => x.InvoiceList[i].Id)
+                @Html.HiddenFor(x => x.Invoices[i].Id)
                 ;
-                @Html.HiddenFor(x => x.InvoiceList[i].BillID)
+                @Html.HiddenFor(x => x.Invoices[i].BillID)
                 ;
-                @Html.HiddenFor(x => x.InvoiceList[i].PaymentAmount)
+                @Html.HiddenFor(x => x.Invoices[i].PaymentAmount)
                 ;
-                @Html.HiddenFor(x => x.InvoiceList[i].Date)
+                @Html.HiddenFor(x => x.Invoices[i].Date)
                 ;
-                @Html.HiddenFor(x => x.InvoiceList[i].PaymentPurpose)
+                @Html.HiddenFor(x => x.Invoices[i].PaymentPurpose)
                 ;
-                @Html.HiddenFor(x => x.InvoiceList[i].Payer)
+                @Html.HiddenFor(x => x.Invoices[i].Payer)
                 ;
-                @Html.HiddenFor(x => x.InvoiceList[i].Urgent)
+                @Html.HiddenFor(x => x.Invoices[i].Urgent)
                 ;
             }
 

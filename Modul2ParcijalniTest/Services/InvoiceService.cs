@@ -1,4 +1,4 @@
-﻿using Modul2ParcijalniTest.Interfaces;
+﻿using Modul2ParcijalniTest.Services.Interfaces;
 using Modul2ParcijalniTest.SqlFacade;
 using Modul2ParcijalniTest.ViewModels;
 using System.Collections.Generic;
@@ -19,12 +19,12 @@ namespace Modul2ParcijalniTest.Services
             _ISqlFacade.RemoveInvoice(id);
         }
 
-        public BillViewModel Payments(int billId)
+        public BillViewModel DisplayAllPayments(int billId)
         {
             List<Invoice> invoiceList = _ISqlFacade.GetAllInvoices();
             List<Bill> billList = _ISqlFacade.GetAllBills();
             Bill bill = billList.FirstOrDefault(x => x.Id == billId);
-            BillViewModel model = new BillViewModel { InvoiceList = invoiceList, Bill = bill };
+            BillViewModel model = new BillViewModel { Invoices = invoiceList, Bill = bill };
             return model;
         }
 
@@ -60,16 +60,16 @@ namespace Modul2ParcijalniTest.Services
         {
             model.Invoice.BillID = model.Bill.Id;
             List<Invoice> invoiceList = _ISqlFacade.GetAllInvoices();
-            model.InvoiceList = invoiceList;
+            model.Invoices = invoiceList;
             _ISqlFacade.AddInvoice(model.Invoice);
         }
 
-        public BillViewModel Payouts(int billId)
+        public BillViewModel DisplayAllPayouts(int billId)
         {
             List<Invoice> invoiceList = _ISqlFacade.GetAllInvoices();
             List<Bill> billList = _ISqlFacade.GetAllBills();
             Bill bill = billList.FirstOrDefault(x => x.Id == billId);
-            BillViewModel model = new BillViewModel { InvoiceList = invoiceList, Bill = bill };
+            BillViewModel model = new BillViewModel { Invoices = invoiceList, Bill = bill };
             return model;
         }
     }

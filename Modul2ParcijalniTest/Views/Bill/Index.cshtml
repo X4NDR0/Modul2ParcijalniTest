@@ -42,7 +42,7 @@
                     Model.Price = 0;
                 }
 
-                @foreach (Invoice uplatnica in Model.InvoiceList)
+                @foreach (Invoice uplatnica in Model.Invoices)
                 {
                     @if (uplatnica.BillID == racun.Id)
                     {

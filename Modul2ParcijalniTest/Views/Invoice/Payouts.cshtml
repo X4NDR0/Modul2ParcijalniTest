@@ -24,7 +24,7 @@
 
         <tr>
 
-            @foreach (Invoice uplatnica in Model.InvoiceList)
+            @foreach (Invoice uplatnica in Model.Invoices)
             {
                 @if (uplatnica.BillID == Model.Bill.Id && uplatnica.PaymentAmount < 0)
                 {

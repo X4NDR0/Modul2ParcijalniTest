@@ -1,4 +1,4 @@
-﻿using Modul2ParcijalniTest.Interfaces;
+﻿using Modul2ParcijalniTest.Services.Interfaces;
 using Modul2ParcijalniTest.SqlFacade;
 using Modul2ParcijalniTest.ViewModels;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace Modul2ParcijalniTest.Services
         {
             List<Bill> billList = _ISqlFacade.GetAllBills();
             List<Invoice> invoiceList = _ISqlFacade.GetAllInvoices();
-            IndexViewModel model = new IndexViewModel { AllBills = billList, Bill = null, InvoiceList = invoiceList };
+            IndexViewModel model = new IndexViewModel { AllBills = billList, Bill = null, Invoices = invoiceList };
             return model;
         }
 
@@ -57,7 +57,7 @@ namespace Modul2ParcijalniTest.Services
                     sortedBills.Add(findBill);
                 }
             }
-            SortBillsViewModel sortBillsViewModel = new SortBillsViewModel { BillList = sortedBills, InvoiceList = _ISqlFacade.GetAllInvoices() };
+            SortBillsViewModel sortBillsViewModel = new SortBillsViewModel { Bills = sortedBills, Invoices = _ISqlFacade.GetAllInvoices() };
             return sortBillsViewModel;
         }
 
@@ -66,7 +66,7 @@ namespace Modul2ParcijalniTest.Services
             List<Bill> billList = _ISqlFacade.GetAllBills();
             List<Invoice> invoiceList = _ISqlFacade.GetAllInvoices();
             Bill bill = billList.FirstOrDefault(x => x.Id == id);
-            BillViewModel billViewModel = new BillViewModel { Bill = bill, InvoiceList = invoiceList };
+            BillViewModel billViewModel = new BillViewModel { Bill = bill, Invoices = invoiceList };
             return billViewModel;
         }
 

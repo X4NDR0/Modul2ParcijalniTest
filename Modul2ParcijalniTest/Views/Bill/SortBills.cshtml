@@ -55,7 +55,7 @@
             <th>Online banking</th>
         </tr>
 
-        @foreach (Bill bill in Model.BillList)
+        @foreach (Bill bill in Model.Bills)
         {
             <tr>
                 <td>@bill.AccountHolder</td>
@@ -65,7 +65,7 @@
                     Model.Price = 0;
                 }
 
-                @foreach (Invoice invoice in Model.InvoiceList)
+                @foreach (Invoice invoice in Model.Invoices)
                 {
                     @if (invoice.BillID == bill.Id)
                     {

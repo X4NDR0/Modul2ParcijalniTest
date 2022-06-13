@@ -7,7 +7,7 @@ namespace Modul2ParcijalniTest.ViewModels
     {
         public Bill Bill { get; set; }
         public Invoice Invoice { get; set; }
-        public List<Invoice> InvoiceList { get; set; }
+        public List<Invoice> Invoices { get; set; }
         public decimal Price { get; set; }
     }
 }

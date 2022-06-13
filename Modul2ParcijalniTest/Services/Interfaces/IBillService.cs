@@ -1,7 +1,7 @@
 ﻿using Modul2ParcijalniTest.SqlFacade;
 using Modul2ParcijalniTest.ViewModels;
 
-namespace Modul2ParcijalniTest.Interfaces
+namespace Modul2ParcijalniTest.Services.Interfaces
 {
     public interface IBillService
     {

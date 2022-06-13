@@ -22,7 +22,7 @@ namespace Modul2ParcijalniTest.Controllers
 
         public IActionResult SortBills()
         {
-            SortBillsViewModel model = new SortBillsViewModel { BillList = new List<Bill>() };
+            SortBillsViewModel model = new SortBillsViewModel { Bills = new List<Bill>() };
             return View(model);
         }
 

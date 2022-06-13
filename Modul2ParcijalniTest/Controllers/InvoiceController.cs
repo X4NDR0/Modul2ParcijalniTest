@@ -9,10 +9,12 @@ namespace Modul2ParcijalniTest.Controllers
     public class InvoiceController : Controller
     {
         private IInvoiceService _IInvoiceService;
+
         public InvoiceController(IInvoiceService IInvoiceService)
         {
             _IInvoiceService = IInvoiceService;
         }
+
         public IActionResult RemoveInvoice(int invoiceId, int billId)
         {
             _IInvoiceService.RemoveInvoice(invoiceId);
@@ -21,20 +23,20 @@ namespace Modul2ParcijalniTest.Controllers
 
         public IActionResult SortInvoices()
         {
-            SortInvoicesViewModel model = new SortInvoicesViewModel { InvoiceList = new List<Invoice>() };
+            SortInvoicesViewModel model = new SortInvoicesViewModel { Invoices = new List<Invoice>() };
             return View(model);
         }
 
         [HttpPost]
         public IActionResult SortInvoices(SortInvoicesViewModel model)
         {
-            model.InvoiceList = _IInvoiceService.SortInvoices(model);
+            model.Invoices = _IInvoiceService.SortInvoices(model);
             return View(model);
         }
 
         public IActionResult Payments(int billId)
         {
-            BillViewModel model = _IInvoiceService.Payments(billId);
+            BillViewModel model = _IInvoiceService.DisplayAllPayments(billId);
             return View(model);
         }
 
@@ -68,7 +70,7 @@ namespace Modul2ParcijalniTest.Controllers
 
         public IActionResult Payouts(int billId)
         {
-            BillViewModel model = _IInvoiceService.Payouts(billId);
+            BillViewModel model = _IInvoiceService.DisplayAllPayouts(billId);
             return View(model);
         }
     }

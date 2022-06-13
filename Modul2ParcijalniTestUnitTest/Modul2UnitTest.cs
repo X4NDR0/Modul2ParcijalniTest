@@ -99,6 +99,5 @@ namespace Modul2ParcijalniTestUnitTest
             //Assert
             Assert.AreEqual(expectedPrice, result);
         }
-
     }
 }
